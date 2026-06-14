@@ -1,0 +1,691 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>SysAdmin Student Hub — Premium Dashboard</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin="anonymous">
+    <link href="https://fonts.googleapis.com/css2?family=Fira+Code:wght@400;600&family=Inter:wght@300;400;600;700&display=swap" rel="stylesheet">
+    
+    <style>
+        :root {
+            --bg-main: #090d16;
+            --bg-card: rgba(17, 25, 40, 0.75);
+            --border-color: rgba(255, 255, 255, 0.1);
+            --text-main: #f1f5f9;
+            --text-muted: #94a3b8;
+            --neon-cyan: #00bfff;
+            --neon-green: #00ff9d;
+            --neon-purple: #8a2be2;
+            --neon-danger: #ff4757;
+            --neon-warning: #ffa500;
+        }
+
+        body {
+            background-color: var(--bg-main);
+            background-image: 
+                radial-gradient(at 0% 0%, rgba(0, 191, 255, 0.08) 0px, transparent 50%),
+                radial-gradient(at 100% 100%, rgba(138, 43, 226, 0.08) 0px, transparent 50%);
+            color: var(--text-main);
+            font-family: 'Inter', sans-serif;
+            padding-bottom: 60px;
+            overflow-x: hidden;
+        }
+
+        /* Кастомный Скроллбар */
+        ::-webkit-scrollbar { width: 8px; }
+        ::-webkit-scrollbar-track { background: var(--bg-main); }
+        ::-webkit-scrollbar-thumb { background: #1e293b; border-radius: 4px; }
+        ::-webkit-scrollbar-thumb:hover { background: var(--neon-cyan); }
+
+        /* Элементы интерфейса в стиле Glassmorphism */
+        .glass-card {
+            background: var(--bg-card);
+            backdrop-filter: blur(12px);
+            -webkit-backdrop-filter: blur(12px);
+            border: 1px solid var(--border-color);
+            border-radius: 16px;
+            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+        }
+        .glass-card:hover {
+            border-color: rgba(0, 191, 255, 0.3);
+            box-shadow: 0 8px 32px 0 rgba(0, 191, 255, 0.05);
+            transform: translateY(-2px);
+        }
+
+        /* Навигация */
+        .navbar {
+            background: rgba(9, 13, 22, 0.8) !important;
+            backdrop-filter: blur(10px);
+            border-bottom: 1px solid var(--border-color);
+            padding: 15px 0;
+        }
+        .navbar-brand {
+            font-family: 'Fira Code', monospace;
+            font-weight: 700;
+            color: var(--neon-green) !important;
+            text-shadow: 0 0 10px rgba(0, 255, 157, 0.3);
+        }
+        .nav-link {
+            color: var(--text-muted) !important;
+            font-weight: 500;
+            margin-left: 15px;
+            padding: 8px 16px !important;
+            border-radius: 8px;
+            transition: all 0.2s;
+        }
+        .nav-link:hover, .nav-link.active {
+            color: var(--neon-cyan) !important;
+            background: rgba(0, 191, 255, 0.1);
+        }
+
+        /* Заголовки */
+        .terminal-header {
+            font-family: 'Fira Code', monospace;
+            color: var(--text-main);
+            border-left: 4px solid var(--neon-cyan);
+            padding-left: 15px;
+            margin-bottom: 30px;
+        }
+        .terminal-header span {
+            color: var(--neon-purple);
+        }
+
+        /* Кнопки */
+        .btn-cyber {
+            border-radius: 8px;
+            font-weight: 600;
+            padding: 10px 20px;
+            transition: all 0.2s;
+            border: none;
+        }
+        .btn-cyber-primary { background: linear-gradient(135deg, #00bfff, #8a2be2); color: white; }
+        .btn-cyber-primary:hover { opacity: 0.9; transform: scale(1.02); }
+        .btn-cyber-success { background: linear-gradient(135deg, #00ff9d, #00bfff); color: #090d16; }
+        .btn-cyber-success:hover { opacity: 0.9; transform: scale(1.02); }
+
+        /* Сниппеты / Терминальный вид */
+        pre {
+            background: #04060a !important;
+            border: 1px solid rgba(255,255,255,0.05);
+            border-radius: 10px;
+            padding: 15px;
+            color: var(--neon-green) !important;
+            font-family: 'Fira Code', monospace;
+            box-shadow: inset 0 0 10px rgba(0,0,0,0.8);
+        }
+
+        /* Канбан Доска */
+        .kanban-col {
+            background: rgba(255, 255, 255, 0.02);
+            border-radius: 14px;
+            padding: 15px;
+            min-height: 60vh;
+            border: 1px dashed rgba(255, 255, 255, 0.05);
+        }
+        .kanban-title {
+            font-family: 'Fira Code', monospace;
+            font-size: 1.1rem;
+            margin-bottom: 15px;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        /* Инпуты форм */
+        .form-control, .form-select {
+            background-color: rgba(255, 255, 255, 0.05) !important;
+            border: 1px solid var(--border-color) !important;
+            color: var(--text-main) !important;
+            border-radius: 8px;
+        }
+        .form-control:focus, .form-select:focus {
+            border-color: var(--neon-cyan) !important;
+            box-shadow: 0 0 10px rgba(0, 191, 255, 0.2) !important;
+        }
+
+        /* Модальные окна */
+        .modal-content {
+            background: #0f172a !important;
+            border: 1px solid rgba(0, 191, 255, 0.2) !important;
+            border-radius: 16px;
+            box-shadow: 0 0 30px rgba(0, 0, 0, 0.5);
+        }
+
+        /* Анимация пульсации для критических задач */
+        .pulse-crit {
+            box-shadow: 0 0 0 0 rgba(255, 71, 87, 0.4);
+            animation: pulse 1.5s infinite;
+        }
+        @keyframes pulse {
+            0% { transform: scale(1); }
+            50% { box-shadow: 0 0 10px 4px rgba(255, 71, 87, 0); }
+            100% { transform: scale(1); }
+        }
+
+        .app-section { display: none; }
+        .app-section.active { display: block; animation: fadeIn 0.4s ease; }
+        @keyframes fadeIn { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
+    </style>
+</head>
+<body>
+
+    <nav class="navbar navbar-expand-lg navbar-dark mb-5">
+        <div class="container">
+            <a class="navbar-brand" href="#"><i class="fa-solid fa-square-terminal me-2"></i>ROOT@STUDENT-HUB:~#</a>
+            <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav">
+                <span class="navbar-toggler-icon"></span>
+            </button>
+            <div class="collapse navbar-collapse" id="navbarNav">
+                <ul class="navbar-nav ms-auto">
+                    <li class="nav-item"><a class="nav-link active" onclick="switchSection('dashboard')"><i class="fa-solid fa-chart-network me-1"></i> Системный дашборд</a></li>
+                    <li class="nav-item"><a class="nav-link" onclick="switchSection('projects')"><i class="fa-solid fa-server me-1"></i> Инфраструктура</a></li>
+                    <li class="nav-item"><a class="nav-link" onclick="switchSection('tasks')"><i class="fa-solid fa-rectangle-list me-1"></i> Задачи (Cron)</a></li>
+                    <li class="nav-item"><a class="nav-link" onclick="switchSection('notes')"><i class="fa-solid fa-command me-1"></i> База знаний</a></li>
+                    <li class="nav-item"><a class="nav-link" onclick="switchSection('profile')"><i class="fa-solid fa-user-robot me-1"></i> Whoami</a></li>
+                </ul>
+            </div>
+        </div>
+    </nav>
+
+    <div class="container">
+        
+        <section id="dashboard-section" class="app-section active">
+            <h3 class="terminal-header">systemctl status <span>student-hub.service</span></h3>
+            <div class="row text-start g-4">
+                <div class="col-md-3 col-6">
+                    <div class="glass-card p-4">
+                        <span class="text-muted small uppercase font-monospace">Deployments</span>
+                        <h2 id="count-projects" class="mt-2" style="color: var(--neon-cyan)">0</h2>
+                    </div>
+                </div>
+                <div class="col-md-3 col-6">
+                    <div class="glass-card p-4">
+                        <span class="text-muted small uppercase font-monospace">Active Workers</span>
+                        <h2 id="count-active-tasks" class="mt-2" style="color: var(--neon-warning)">0</h2>
+                    </div>
+                </div>
+                <div class="col-md-3 col-6">
+                    <div class="glass-card p-4">
+                        <span class="text-muted small uppercase font-monospace">Success Jobs</span>
+                        <h2 id="count-completed-tasks" class="mt-2" style="color: var(--neon-green)">0</h2>
+                    </div>
+                </div>
+                <div class="col-md-3 col-6">
+                    <div class="glass-card p-4">
+                        <span class="text-muted small uppercase font-monospace">Config Snippets</span>
+                        <h2 id="count-notes" class="mt-2" style="color: var(--neon-purple)">0</h2>
+                    </div>
+                </div>
+            </div>
+
+            <div class="row mt-4 g-4">
+                <div class="col-md-6">
+                    <div class="glass-card p-4">
+                        <h5 class="mb-4 font-monospace"><i class="fa-solid fa-chart-pie me-2"></i>Распределение процессов</h5>
+                        <div style="max-height: 280px; display: flex; justify-content: center;">
+                            <canvas id="tasksChart"></canvas>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-md-6">
+                    <div class="glass-card p-4">
+                        <h5 class="mb-4 font-monospace"><i class="fa-solid fa-chart-bar me-2"></i>Интенсивность по нодам</h5>
+                        <div style="max-height: 280px;">
+                            <canvas id="projectsChart"></canvas>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="glass-card p-4 mt-4">
+                <h5 class="font-monospace text-white mb-3"><i class="fa-solid fa-cloud-arrow-down me-2"></i>Управление резервными копиями</h5>
+                <div class="row align-items-center g-3">
+                    <div class="col-auto">
+                        <button class="btn btn-cyber btn-cyber-primary" onclick="exportData()"><i class="fa-solid fa-download me-2"></i>Сделать дамп (JSON)</button>
+                    </div>
+                    <div class="col-md-4">
+                        <input type="file" id="importFile" class="form-control" accept=".json" onchange="importData(event)">
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <section id="projects-section" class="app-section">
+            <div class="d-flex justify-content-between align-items-center mb-4">
+                <h3 class="terminal-header">ls -la <span>/var/log/infrastructure</span></h3>
+                <button class="btn btn-cyber btn-cyber-success" data-bs-toggle="modal" data-bs-target="#projectModal" onclick="clearProjectForm()"><i class="fa-solid fa-plus me-2"></i>Развернуть хост</button>
+            </div>
+            <div class="row g-3 mb-4">
+                <div class="col-md-6">
+                    <input type="text" id="search-project" class="form-control" placeholder="Поиск хоста по alias..." oninput="renderProjects()">
+                </div>
+                <div class="col-md-6">
+                    <select id="filter-project" class="form-select" onchange="renderProjects()">
+                        <option value="all">Все состояния ноды</option>
+                        <option value="В планировании">В планировании</option>
+                        <option value="В работе">В работе</option>
+                        <option value="Завершен">Завершен</option>
+                    </select>
+                </div>
+            </div>
+            <div class="row g-4" id="projects-list"></div>
+        </section>
+
+        <section id="tasks-section" class="app-section">
+            <div class="d-flex justify-content-between align-items-center mb-4">
+                <h3 class="terminal-header">crontab <span>-l</span></h3>
+                <button class="btn btn-cyber btn-cyber-primary" data-bs-toggle="modal" data-bs-target="#taskModal" onclick="clearTaskForm()"><i class="fa-solid fa-plus me-2"></i>Запланировать таск</button>
+            </div>
+            <div class="row g-3">
+                <div class="col-md-3">
+                    <div class="kanban-col">
+                        <div class="kanban-title text-secondary"><i class="fa-solid fa-hourglass-start"></i> TODO</div>
+                        <div id="tasks-todo"></div>
+                    </div>
+                </div>
+                <div class="col-md-3">
+                    <div class="kanban-col">
+                        <div class="kanban-title text-warning"><i class="fa-solid fa-gear fa-spin"></i> RUNNING</div>
+                        <div id="tasks-progress"></div>
+                    </div>
+                </div>
+                <div class="col-md-3">
+                    <div class="kanban-col">
+                        <div class="kanban-title text-info"><i class="fa-solid fa-code-pull-request"></i> TESTING</div>
+                        <div id="tasks-review"></div>
+                    </div>
+                </div>
+                <div class="col-md-3">
+                    <div class="kanban-col">
+                        <div class="kanban-title text-success"><i class="fa-solid fa-circle-check"></i> EXITED (0)</div>
+                        <div id="tasks-done"></div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <section id="notes-section" class="app-section">
+            <div class="d-flex justify-content-between align-items-center mb-4">
+                <h3 class="terminal-header">cat <span>/etc/knowledge_base</span></h3>
+                <button class="btn btn-cyber btn-cyber-success" data-bs-toggle="modal" data-bs-target="#noteModal" onclick="clearNoteForm()"><i class="fa-solid fa-pen-fancy me-2"></i>Новый сниппет</button>
+            </div>
+            <div class="row mb-4">
+                <div class="col-12">
+                    <input type="text" id="search-note" class="form-control" placeholder="Grep по содержимому базы знаний..." oninput="renderNotes()">
+                </div>
+            </div>
+            <div class="row g-4" id="notes-list"></div>
+        </section>
+
+        <section id="profile-section" class="app-section">
+            <h3 class="terminal-header">whoami <span>--privileges</span></h3>
+            <div class="glass-card p-5 mx-auto text-center" style="max-width: 550px;">
+                <div class="mb-4">
+                    <div style="display:inline-block; position:relative;">
+                        <i class="fa-solid fa-user-shield fa-5x" style="color: var(--neon-cyan)"></i>
+                        <span class="position-absolute bottom-0 end-0 badge rounded-pill bg-success">Online</span>
+                    </div>
+                    <h4 class="mt-3 font-monospace">root@sysadmin-student-pc</h4>
+                    <p class="text-muted small">Специальность 09.02.07 — Разработчик веб-приложений</p>
+                </div>
+                <div class="text-start font-monospace border-top pt-3 rgba-white-05">
+                    <p class="mb-2"><i class="fa-solid fa-terminal me-2 text-muted"></i> Shell: <span class="text-success">/bin/bash</span></p>
+                    <p class="mb-2"><i class="fa-solid fa-key me-2 text-muted"></i> Access level: <span class="text-danger">sudoers (ALL=ALL)</span></p>
+                    <p class="mb-2"><i class="fa-solid fa-server me-2 text-muted"></i> Local Core: <span class="text-info">LocalStorage Stack</span></p>
+                    <p class="mb-0"><i class="fa-solid fa-file-certificate me-2 text-muted"></i> Практика: <span class="text-warning">UP.05 Final Step</span></p>
+                </div>
+            </div>
+        </section>
+    </div>
+
+    <div class="modal fade" id="projectModal" tabindex="-1" aria-hidden="true">
+        <div class="modal-dialog"><div class="modal-content text-white">
+            <div class="modal-header border-0"><h5 class="modal-title font-monospace text-info"># Настройка ноды</h5><button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal"></button></div>
+            <div class="modal-body">
+                <input type="hidden" id="project-id">
+                <div class="mb-3"><label class="text-muted small mb-1">Имя хоста</label><input type="text" id="project-title" class="form-control" required></div>
+                <div class="mb-3"><label class="text-muted small mb-1">Архитектура / Описание</label><textarea id="project-desc" class="form-control" rows="3"></textarea></div>
+                <div class="mb-3"><label class="text-muted small mb-1">Дата инициализации</label><input type="date" id="project-start" class="form-control"></div>
+                <div class="mb-3"><label class="text-muted small mb-1">Таймаут (Дедлайн)</label><input type="date" id="project-end" class="form-control"></div>
+                <div class="mb-3"><label class="text-muted small mb-1">Статус контейнера</label><select id="project-status" class="form-select"><option>В планировании</option><option>В работе</option><option>Завершен</option></select></div>
+                <div class="mb-3"><label class="text-muted small mb-1">Критичность инфраструктуры</label><select id="project-priority" class="form-select"><option value="low">Низкий (STABLE)</option><option value="medium">Средний (WARN)</option><option value="high">Критический (CRIT)</option></select></div>
+            </div>
+            <div class="modal-footer border-0"><button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Аборт</button><button type="button" class="btn btn-cyber btn-cyber-success" onclick="saveProject()">Применить коммит</button></div>
+        </div></div>
+    </div>
+
+    <div class="modal fade" id="taskModal" tabindex="-1" aria-hidden="true">
+        <div class="modal-dialog"><div class="modal-content text-white">
+            <div class="modal-header border-0"><h5 class="modal-title font-monospace text-warning"># Редактирование процесса</h5><button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal"></button></div>
+            <div class="modal-body">
+                <input type="hidden" id="task-id">
+                <div class="mb-3"><label class="text-muted small mb-1">Команда / Имя процесса</label><input type="text" id="task-title" class="form-control" required></div>
+                <div class="mb-3"><label class="text-muted small mb-1">Срок выполнения</label><input type="date" id="task-deadline" class="form-control"></div>
+                <div class="mb-3"><label class="text-muted small mb-1">Поток выполнения</label><select id="task-status" class="form-select"><option value="todo">Запланировано</option><option value="progress">В работе</option><option value="review">Проверка</option><option value="done">Завершено</option></select></div>
+            </div>
+            <div class="modal-footer border-0"><button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Закрыть</button><button type="button" class="btn btn-cyber btn-cyber-primary" onclick="saveTask()">Старт процесса</button></div>
+        </div></div>
+    </div>
+
+    <div class="modal fade" id="noteModal" tabindex="-1" aria-hidden="true">
+        <div class="modal-dialog"><div class="modal-content text-white">
+            <div class="modal-header border-0"><h5 class="modal-title font-monospace text-purple" style="color: var(--neon-purple)"># Запись лога шпоры</h5><button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal"></button></div>
+            <div class="modal-body">
+                <input type="hidden" id="note-id">
+                <div class="mb-3"><label class="text-muted small mb-1">Тег / Пространство имен</label><input type="text" id="note-tag" class="form-control" placeholder="Например: Iptables, Nginx, Systemd"></div>
+                <div class="mb-3"><label class="text-muted small mb-1">Тело сниппета / Команды</label><textarea id="note-text" class="form-control" rows="5"></textarea></div>
+            </div>
+            <div class="modal-footer border-0"><button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Отмена</button><button type="button" class="btn btn-cyber btn-cyber-success" onclick="saveNote()">Записать</button></div>
+        </div></div>
+    </div>
+
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    
+    <script>
+        // JS Логика (Полностью сохранена для работоспособности)
+        let store = JSON.parse(localStorage.getItem('sysadmin_hub_data')) || {
+            projects: [
+                { id: 1, title: "Стенд Локальной сети Колледжа", desc: "Развертывание Samba-сервера, DNS и DHCP на Ubuntu Server 24.04", start: "2026-06-01", end: "2026-06-20", status: "В работе", priority: "high" }
+            ],
+            tasks: [
+                { id: 1, title: "Написать Bash-скрипт резервного копирования логов", deadline: "2026-06-14", status: "progress" },
+                { id: 2, title: "Проверить правила iptables на шлюзе", deadline: "2026-06-10", status: "todo" }
+            ],
+            notes: [
+                { id: 1, tag: "Docker", text: "Очистка неиспользуемых контейнеров и образов:\ndocker system prune -a --volumes", date: "14.06.2026" }
+            ]
+        };
+
+        function updateStorage() {
+            localStorage.setItem('sysadmin_hub_data', JSON.stringify(store));
+            updateDashboardMetrics();
+        }
+
+        function switchSection(sectionName) {
+            document.querySelectorAll('.app-section').forEach(s => s.classList.remove('active'));
+            document.querySelectorAll('.nav-link').forEach(l => l.classList.remove('active'));
+            
+            document.getElementById(`${sectionName}-section`).classList.add('active');
+            event.currentTarget.classList.add('active');
+
+            if (sectionName === 'dashboard') initCharts();
+            if (sectionName === 'projects') renderProjects();
+            if (sectionName === 'tasks') renderTasks();
+            if (sectionName === 'notes') renderNotes();
+        }
+
+        function renderProjects() {
+            const list = document.getElementById('projects-list');
+            const search = document.getElementById('search-project').value.toLowerCase();
+            const filter = document.getElementById('filter-project').value;
+            list.innerHTML = '';
+
+            store.projects.forEach(p => {
+                if (p.title.toLowerCase().includes(search) && (filter === 'all' || p.status === filter)) {
+                    let pColor = p.priority === 'high' ? 'var(--neon-danger)' : (p.priority === 'medium' ? 'var(--neon-warning)' : 'var(--neon-green)');
+                    let isPulse = p.priority === 'high' ? 'pulse-crit' : '';
+                    list.innerHTML += `
+                        <div class="col-md-4">
+                            <div class="glass-card p-4 ${isPulse}">
+                                <div class="d-flex justify-content-between align-items-start mb-3">
+                                    <span class="badge font-monospace" style="background: ${pColor}; color:#000;">${p.priority.toUpperCase()}</span>
+                                    <span class="text-muted small"><i class="fa-solid fa-clock me-1"></i> до ${p.end}</span>
+                                </div>
+                                <h5 class="text-white fw-bold mb-2">${p.title}</h5>
+                                <p class="small text-muted mb-4" style="min-height: 40px;">${p.desc}</p>
+                                <div class="d-flex justify-content-between align-items-center border-top pt-3 rgba-white-05">
+                                    <span class="small font-monospace text-muted">Status: <strong class="text-white">${p.status}</strong></span>
+                                    <div>
+                                        <button class="btn btn-sm btn-outline-info me-1" onclick="editProject(${p.id})"><i class="fa-solid fa-sliders"></i></button>
+                                        <button class="btn btn-sm btn-outline-danger" onclick="deleteProject(${p.id})"><i class="fa-solid fa-trash-xmark"></i></button>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>`;
+                }
+            });
+        }
+
+        function saveProject() {
+            const id = document.getElementById('project-id').value;
+            const projectData = {
+                id: id ? parseInt(id) : Date.now(),
+                title: document.getElementById('project-title').value,
+                desc: document.getElementById('project-desc').value,
+                start: document.getElementById('project-start').value,
+                end: document.getElementById('project-end').value,
+                status: document.getElementById('project-status').value,
+                priority: document.getElementById('project-priority').value
+            };
+            if (!projectData.title) return alert("Укажите имя хоста!");
+
+            if (id) {
+                const idx = store.projects.findIndex(p => p.id === parseInt(id));
+                store.projects[idx] = projectData;
+            } else { store.projects.push(projectData); }
+            updateStorage(); renderProjects();
+            bootstrap.Modal.getInstance(document.getElementById('projectModal')).hide();
+        }
+
+        function editProject(id) {
+            const p = store.projects.find(p => p.id === id);
+            document.getElementById('project-id').value = p.id;
+            document.getElementById('project-title').value = p.title;
+            document.getElementById('project-desc').value = p.desc;
+            document.getElementById('project-start').value = p.start;
+            document.getElementById('project-end').value = p.end;
+            document.getElementById('project-status').value = p.status;
+            document.getElementById('project-priority').value = p.priority;
+            new bootstrap.Modal(document.getElementById('projectModal')).show();
+        }
+
+        function deleteProject(id) {
+            if (confirm("rm -rf на этот проект? Данные будут стерты.")) {
+                store.projects = store.projects.filter(p => p.id !== id);
+                updateStorage(); renderProjects();
+            }
+        }
+
+        function clearProjectForm() {
+            document.getElementById('project-id').value = '';
+            document.getElementById('project-title').value = '';
+            document.getElementById('project-desc').value = '';
+            document.getElementById('project-start').value = '';
+            document.getElementById('project-end').value = '';
+        }
+
+        function renderTasks() {
+            const cols = { todo: document.getElementById('tasks-todo'), progress: document.getElementById('tasks-progress'), review: document.getElementById('tasks-review'), done: document.getElementById('tasks-done') };
+            Object.values(cols).forEach(c => c.innerHTML = '');
+            const today = new Date().toISOString().split('T')[0];
+
+            store.tasks.forEach(t => {
+                const isOverdue = t.deadline && t.deadline < today && t.status !== 'done';
+                const cardHtml = `
+                    <div class="glass-card p-3 mb-3 bg-dark ${isOverdue ? 'border-danger' : ''}">
+                        <div class="d-flex justify-content-between align-items-center mb-2">
+                            <span class="small ${isOverdue ? 'text-danger fw-bold' : 'text-muted'} font-monospace">${t.deadline || 'No TTL'}</span>
+                        </div>
+                        <p class="mb-3 text-white small font-monospace">> ${t.title}</p>
+                        <div class="text-end">
+                            <button class="btn btn-sm text-muted p-0 me-2" onclick="editTask(${t.id})"><i class="fa-solid fa-pen"></i></button>
+                            <button class="btn btn-sm text-danger p-0" onclick="deleteTask(${t.id})"><i class="fa-solid fa-terminal-trash"></i></button>
+                        </div>
+                    </div>`;
+                if (cols[t.status]) cols[t.status].innerHTML += cardHtml;
+            });
+        }
+
+        function saveTask() {
+            const id = document.getElementById('task-id').value;
+            const taskData = {
+                id: id ? parseInt(id) : Date.now(),
+                title: document.getElementById('task-title').value,
+                deadline: document.getElementById('task-deadline').value,
+                status: document.getElementById('task-status').value
+            };
+            if (!taskData.title) return alert("Введите команду процесса!");
+
+            if (id) {
+                const idx = store.tasks.findIndex(t => t.id === parseInt(id));
+                store.tasks[idx] = taskData;
+            } else { store.tasks.push(taskData); }
+            updateStorage(); renderTasks();
+            bootstrap.Modal.getInstance(document.getElementById('taskModal')).hide();
+        }
+
+        function editTask(id) {
+            const t = store.tasks.find(t => t.id === id);
+            document.getElementById('task-id').value = t.id;
+            document.getElementById('task-title').value = t.title;
+            document.getElementById('task-deadline').value = t.deadline;
+            document.getElementById('task-status').value = t.status;
+            new bootstrap.Modal(document.getElementById('taskModal')).show();
+        }
+
+        function deleteTask(id) {
+            store.tasks = store.tasks.filter(t => t.id !== id);
+            updateStorage(); renderTasks();
+        }
+
+        function clearTaskForm() {
+            document.getElementById('task-id').value = '';
+            document.getElementById('task-title').value = '';
+            document.getElementById('task-deadline').value = '';
+        }
+
+        function renderNotes() {
+            const list = document.getElementById('notes-list');
+            const search = document.getElementById('search-note').value.toLowerCase();
+            list.innerHTML = '';
+
+            store.notes.forEach(n => {
+                if (n.tag.toLowerCase().includes(search) || n.text.toLowerCase().includes(search)) {
+                    list.innerHTML += `
+                        <div class="col-md-6">
+                            <div class="glass-card p-4">
+                                <div class="d-flex justify-content-between align-items-center mb-2">
+                                    <span style="color: var(--neon-purple)" class="font-monospace fw-bold"># ${n.tag}</span>
+                                    <span class="text-muted small">${n.date}</span>
+                                </div>
+                                <pre><code>${n.text}</code></pre>
+                                <div class="text-end mt-2">
+                                    <button class="btn btn-sm btn-outline-warning me-1" onclick="editNote(${n.id})"><i class="fa-solid fa-sliders"></i></button>
+                                    <button class="btn btn-sm btn-outline-danger" onclick="deleteNote(${n.id})"><i class="fa-solid fa-trash-can"></i></button>
+                                </div>
+                            </div>
+                        </div>`;
+                }
+            });
+        }
+
+        function saveNote() {
+            const id = document.getElementById('note-id').value;
+            const noteData = {
+                id: id ? parseInt(id) : Date.now(),
+                tag: document.getElementById('note-tag').value || "Global",
+                text: document.getElementById('note-text').value,
+                date: new Date().toLocaleDateString('ru-RU')
+            };
+            if (!noteData.text) return alert("Лог пустой!");
+
+            if (id) {
+                const idx = store.notes.findIndex(n => n.id === parseInt(id));
+                store.notes[idx].tag = noteData.tag;
+                store.notes[idx].text = noteData.text;
+            } else { store.notes.push(noteData); }
+            updateStorage(); renderNotes();
+            bootstrap.Modal.getInstance(document.getElementById('noteModal')).hide();
+        }
+
+        function editNote(id) {
+            const n = store.notes.find(n => n.id === id);
+            document.getElementById('note-id').value = n.id;
+            document.getElementById('note-tag').value = n.tag;
+            document.getElementById('note-text').value = n.text;
+            new bootstrap.Modal(document.getElementById('noteModal')).show();
+        }
+
+        function deleteNote(id) {
+            store.notes = store.notes.filter(n => n.id !== id);
+            updateStorage(); renderNotes();
+        }
+
+        function clearNoteForm() {
+            document.getElementById('note-id').value = '';
+            document.getElementById('note-tag').value = '';
+            document.getElementById('note-text').value = '';
+        }
+
+        function exportData() {
+            const dataStr = "data:text/json;charset=utf-8," + encodeURIComponent(JSON.stringify(store, null, 2));
+            const dlAnchorElem = document.createElement('a');
+            dlAnchorElem.setAttribute("href", dataStr);
+            dlAnchorElem.setAttribute("download", "studenthub_backup.json");
+            dlAnchorElem.click();
+        }
+
+        function importData(event) {
+            const fileReader = new FileReader();
+            fileReader.onload = function(e) {
+                try {
+                    const parsed = JSON.parse(e.target.result);
+                    if(parsed.projects && parsed.tasks && parsed.notes) {
+                        store = parsed; updateStorage();
+                        alert("База данных синхронизирована!"); location.reload();
+                    } else { alert("Структура повреждена."); }
+                } catch(err) { alert("Ошибка парсинга файла."); }
+            }
+            fileReader.readAsText(event.target.files[0]);
+        }
+
+        let tasksChart, projectsChart;
+
+        function updateDashboardMetrics() {
+            document.getElementById('count-projects').innerText = store.projects.length;
+            document.getElementById('count-active-tasks').innerText = store.tasks.filter(t => t.status !== 'done').length;
+            document.getElementById('count-completed-tasks').innerText = store.tasks.filter(t => t.status === 'done').length;
+            document.getElementById('count-notes').innerText = store.notes.length;
+        }
+
+        function initCharts() {
+            updateDashboardMetrics();
+            const todo = store.tasks.filter(t => t.status === 'todo').length;
+            const prog = store.tasks.filter(t => t.status === 'progress').length;
+            const rev = store.tasks.filter(t => t.status === 'review').length;
+            const done = store.tasks.filter(t => t.status === 'done').length;
+
+            if (tasksChart) tasksChart.destroy();
+            tasksChart = new Chart(document.getElementById('tasksChart'), {
+                type: 'doughnut',
+                data: {
+                    labels: ['TODO', 'RUNNING', 'TESTING', 'EXITED'],
+                    datasets: [{ data: [todo, prog, rev, done], backgroundColor: ['#64748b', '#ffa500', '#00bfff', '#00ff9d'], borderWidth: 0 }]
+                },
+                options: { plugins: { legend: { labels: { color: '#f1f5f9', font: { family: 'Fira Code' } } } } }
+            });
+
+            const low = store.projects.filter(p => p.priority === 'low').length;
+            const med = store.projects.filter(p => p.priority === 'medium').length;
+            const high = store.projects.filter(p => p.priority === 'high').length;
+
+            if (projectsChart) projectsChart.destroy();
+            projectsChart = new Chart(document.getElementById('projectsChart'), {
+                type: 'bar',
+                data: {
+                    labels: ['STABLE', 'WARNING', 'CRITICAL'],
+                    datasets: [{ data: [low, med, high], backgroundColor: ['#00ff9d', '#ffa500', '#ff4757'] }]
+                },
+                options: { scales: { y: { grid: { color: 'rgba(255,255,255,0.05)' }, ticks: { color: '#94a3b8' } }, x: { ticks: { color: '#94a3b8', font: { family: 'Fira Code' } } } }, plugins: { legend: { display: false } } }
+            });
+        }
+
+        window.onload = function() { initCharts(); };
+    </script>
+</body>
+</html>
